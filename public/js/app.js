@@ -1767,6 +1767,14 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
 //
@@ -1779,7 +1787,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])({
+    apiStatus: function apiStatus(state) {
+      return state.auth.apiStatus;
+    }
+  }), {}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])({
+    isLogin: 'auth/check'
+  })),
   methods: {
     logout: function logout() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function logout$(_context) {
@@ -1790,7 +1806,9 @@ __webpack_require__.r(__webpack_exports__);
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(this.$store.dispatch('auth/logout'));
 
             case 2:
-              this.$router.push('/login');
+              if (this.apiStatus) {
+                this.$router.push('/login');
+              }
 
             case 3:
             case "end":
@@ -1798,11 +1816,6 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }, null, this);
-    }
-  },
-  computed: {
-    isLogin: function isLogin() {
-      return this.$store.getters['auth/check'];
     }
   }
 });
@@ -1926,6 +1939,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -1949,6 +1973,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     loginErrors: function loginErrors(state) {
       return state.auth.loginErrorMessages;
+    },
+    registerErrors: function registerErrors(state) {
+      return state.auth.registerErrorMessages;
     }
   })),
   methods: {
@@ -1982,8 +2009,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(this.$store.dispatch('auth/register', this.registerForm));
 
             case 2:
-              // トップページに移動する
-              this.$router.push('/');
+              if (this.apiStatus) {
+                // トップページに移動する
+                this.$router.push('/');
+              }
 
             case 3:
             case "end":
@@ -1994,6 +2023,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     clearError: function clearError() {
       this.$store.commit('auth/setLoginErrorMessages', null);
+      this.$store.commit('auth/setRegisterErrorMessages', null);
     }
   },
   created: function created() {
@@ -20670,6 +20700,40 @@ var render = function() {
             }
           },
           [
+            _vm.registerErrors
+              ? _c("div", { staticClass: "errors" }, [
+                  _vm.registerErrors.name
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.registerErrors.name, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.registerErrors.email
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.registerErrors.email, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.registerErrors.password
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.registerErrors.password, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e()
+                ])
+              : _vm._e(),
+            _vm._v(" "),
             _c("label", { attrs: { for: "username" } }, [_vm._v("Name")]),
             _vm._v(" "),
             _c("input", {
@@ -37120,6 +37184,11 @@ window.axios.interceptors.request.use(function (config) {
   config.headers['X-XSRF-TOKEN'] = Object(_util__WEBPACK_IMPORTED_MODULE_0__["getCookieValue"])('XSRF-TOKEN');
   return config;
 });
+window.axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  return error.response || error;
+});
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -37521,7 +37590,8 @@ __webpack_require__.r(__webpack_exports__);
 var state = {
   user: null,
   apiStatus: null,
-  loginErrorMessages: null
+  loginErrorMessages: null,
+  registerErrorMessages: null
 };
 var getters = {
   check: function check(state) {
@@ -37536,33 +37606,58 @@ var mutations = {
     state.user = user;
   },
   setApiStatus: function setApiStatus(state, status) {
-    /* 中略 */
+    state.apiStatus = status;
   },
   setLoginErrorMessages: function setLoginErrorMessages(state, messages) {
     state.loginErrorMessages = messages;
+  },
+  setRegisterErrorMessages: function setRegisterErrorMessages(state, messages) {
+    state.registerErrorMessages = messages;
   }
 };
 var actions = {
+  // 会員登録
   register: function register(context, data) {
     var response;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function register$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            _context.next = 2;
+            context.commit('setApiStatus', null);
+            _context.next = 3;
             return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/register', data));
 
-          case 2:
+          case 3:
             response = _context.sent;
-            context.commit('setUser', response.data);
 
-          case 4:
+            if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["CREATED"])) {
+              _context.next = 8;
+              break;
+            }
+
+            context.commit('setApiStatus', true);
+            context.commit('setUser', response.data);
+            return _context.abrupt("return", false);
+
+          case 8:
+            context.commit('setApiStatus', false);
+
+            if (response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"]) {
+              context.commit('setRegisterErrorMessages', response.data.errors);
+            } else {
+              context.commit('error/setCode', response.status, {
+                root: true
+              });
+            }
+
+          case 10:
           case "end":
             return _context.stop();
         }
       }
     });
   },
+  // ログイン
   login: function login(context, data) {
     var response;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function login$(_context2) {
@@ -37571,9 +37666,7 @@ var actions = {
           case 0:
             context.commit('setApiStatus', null);
             _context2.next = 3;
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/login', data)["catch"](function (err) {
-              return err.response || err;
-            }));
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/login', data));
 
           case 3:
             response = _context2.sent;
@@ -37605,41 +37698,73 @@ var actions = {
       }
     });
   },
+  // ログアウト
   logout: function logout(context) {
     var response;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function logout$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            _context3.next = 2;
+            context.commit('setApiStatus', null);
+            _context3.next = 3;
             return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/logout'));
 
-          case 2:
+          case 3:
             response = _context3.sent;
-            context.commit('setUser', null);
 
-          case 4:
+            if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
+              _context3.next = 8;
+              break;
+            }
+
+            context.commit('setApiStatus', true);
+            context.commit('setUser', null);
+            return _context3.abrupt("return", false);
+
+          case 8:
+            context.commit('setApiStatus', false);
+            context.commit('error/setCode', response.status, {
+              root: true
+            });
+
+          case 10:
           case "end":
             return _context3.stop();
         }
       }
     });
   },
+  // ログインユーザーチェック
   currentUser: function currentUser(context) {
     var response, user;
     return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function currentUser$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
-            _context4.next = 2;
+            context.commit('setApiStatus', null);
+            _context4.next = 3;
             return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.get('/api/user'));
 
-          case 2:
+          case 3:
             response = _context4.sent;
             user = response.data || null;
-            context.commit('setUser', user);
 
-          case 5:
+            if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
+              _context4.next = 9;
+              break;
+            }
+
+            context.commit('setApiStatus', true);
+            context.commit('setUser', user);
+            return _context4.abrupt("return", false);
+
+          case 9:
+            context.commit('setApiStatus', false);
+            context.commit('error/setCode', response.status, {
+              root: true
+            });
+
+          case 11:
           case "end":
             return _context4.stop();
         }
