@@ -1866,6 +1866,14 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
 //
@@ -1910,6 +1918,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -1926,11 +1943,14 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  computed: {
-    apiStatus: function apiStatus() {
-      return this.$store.state.auth.apiStatus;
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapState"])({
+    apiStatus: function apiStatus(state) {
+      return state.auth.apiStatus;
+    },
+    loginErrors: function loginErrors(state) {
+      return state.auth.loginErrorMessages;
     }
-  },
+  })),
   methods: {
     login: function login() {
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function login$(_context) {
@@ -1971,7 +1991,13 @@ __webpack_require__.r(__webpack_exports__);
           }
         }
       }, null, this);
+    },
+    clearError: function clearError() {
+      this.$store.commit('auth/setLoginErrorMessages', null);
     }
+  },
+  created: function created() {
+    this.clearError();
   }
 });
 
@@ -20538,6 +20564,30 @@ var render = function() {
             }
           },
           [
+            _vm.loginErrors
+              ? _c("div", { staticClass: "errors" }, [
+                  _vm.loginErrors.email
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.loginErrors.email, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.loginErrors.password
+                    ? _c(
+                        "ul",
+                        _vm._l(_vm.loginErrors.password, function(msg) {
+                          return _c("li", { key: msg }, [_vm._v(_vm._s(msg))])
+                        }),
+                        0
+                      )
+                    : _vm._e()
+                ])
+              : _vm._e(),
+            _vm._v(" "),
             _c("label", { attrs: { for: "login-email" } }, [_vm._v("Email")]),
             _vm._v(" "),
             _c("input", {
@@ -37470,7 +37520,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var state = {
   user: null,
-  apiStatus: null
+  apiStatus: null,
+  loginErrorMessages: null
 };
 var getters = {
   check: function check(state) {
@@ -37483,6 +37534,12 @@ var getters = {
 var mutations = {
   setUser: function setUser(state, user) {
     state.user = user;
+  },
+  setApiStatus: function setApiStatus(state, status) {
+    /* 中略 */
+  },
+  setLoginErrorMessages: function setLoginErrorMessages(state, messages) {
+    state.loginErrorMessages = messages;
   }
 };
 var actions = {
@@ -37492,31 +37549,14 @@ var actions = {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            context.commit('setApiStatus', null);
-            _context.next = 3;
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/register', data)["catch"](function (err) {
-              return err.response || err;
-            }));
+            _context.next = 2;
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/register', data));
 
-          case 3:
+          case 2:
             response = _context.sent;
-
-            if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
-              _context.next = 8;
-              break;
-            }
-
-            context.commit('setApiStatus', true);
             context.commit('setUser', response.data);
-            return _context.abrupt("return", false);
 
-          case 8:
-            context.commit('setApiStatus', false);
-            context.commit('error/setCode', response.status, {
-              root: true
-            });
-
-          case 10:
+          case 4:
           case "end":
             return _context.stop();
         }
@@ -37529,14 +37569,36 @@ var actions = {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            _context2.next = 2;
-            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/login', data));
+            context.commit('setApiStatus', null);
+            _context2.next = 3;
+            return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(axios.post('/api/login', data)["catch"](function (err) {
+              return err.response || err;
+            }));
 
-          case 2:
+          case 3:
             response = _context2.sent;
-            context.commit('setUser', response.data);
 
-          case 4:
+            if (!(response.status === _util__WEBPACK_IMPORTED_MODULE_1__["OK"])) {
+              _context2.next = 8;
+              break;
+            }
+
+            context.commit('setApiStatus', true);
+            context.commit('setUser', response.data);
+            return _context2.abrupt("return", false);
+
+          case 8:
+            context.commit('setApiStatus', false);
+
+            if (response.status === _util__WEBPACK_IMPORTED_MODULE_1__["UNPROCESSABLE_ENTITY"]) {
+              context.commit('setLoginErrorMessages', response.data.errors);
+            } else {
+              context.commit('error/setCode', response.status, {
+                root: true
+              });
+            }
+
+          case 10:
           case "end":
             return _context2.stop();
         }
@@ -37653,7 +37715,7 @@ var store = new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
 /*!******************************!*\
   !*** ./resources/js/util.js ***!
   \******************************/
-/*! exports provided: getCookieValue, OK, CREATED, INTERNAL_SERVER_ERROR */
+/*! exports provided: getCookieValue, OK, CREATED, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -37661,6 +37723,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getCookieValue", function() { return getCookieValue; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "OK", function() { return OK; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CREATED", function() { return CREATED; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UNPROCESSABLE_ENTITY", function() { return UNPROCESSABLE_ENTITY; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "INTERNAL_SERVER_ERROR", function() { return INTERNAL_SERVER_ERROR; });
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
@@ -37695,6 +37758,7 @@ function getCookieValue(searchKey) {
 }
 var OK = 200;
 var CREATED = 201;
+var UNPROCESSABLE_ENTITY = 422;
 var INTERNAL_SERVER_ERROR = 500;
 
 /***/ }),
