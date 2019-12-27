@@ -91,5 +91,12 @@ class Photo extends Model
         return Storage::cloud()->url($this->attributes['filename']);
     }
 
-    
+    /**
+     * リレーションシップ - usersテーブル
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function likes()
+    {
+        return $this->belongsToMany('App\User', 'likes')->withTimestamps();
+    }
 }
